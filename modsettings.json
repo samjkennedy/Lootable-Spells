@@ -1,0 +1,43 @@
+{
+    "Version": "0.9",
+    "Sections": [
+        {
+            "Name": "Availability",
+            "Description": "Availability of Spellbook Pages",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Value": true,
+                    "Name": "Shops",
+                    "Description": "Shops sell Spellbook Pages",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "DungeonLoot",
+                    "Description": "Loot piles contain Spellbook Pages",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "NPCLoot",
+                    "Description": "NPC loot piles contain Spellbook Pages",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Min": 0.0,
+                    "Max": 2.0,
+                    "Value": 1.0,
+                    "Name": "FrequencyMultiplier",
+                    "Description": "How often Spellbook Pages appear",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
+                }
+            ],
+            "$version": "v1"
+        }
+    ]
+}
