@@ -95,8 +95,8 @@ namespace LootableSpells
         */
         public static void AddSpellPages_OnLootSpawned(object sender, ContainerLootSpawnedEventArgs e)
         {
-            if (UnityEngine.Random.Range(0, 100) > spellPageChancePercent)
-                return;
+            // if (UnityEngine.Random.Range(0, 100) > 90)
+            //     return;
 
             DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
             if (interior == null || e.ContainerType != LootContainerTypes.ShopShelves)
