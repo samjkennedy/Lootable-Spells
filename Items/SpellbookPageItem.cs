@@ -1,20 +1,19 @@
-﻿using UnityEngine;
-using System.Linq;
-using System;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Serialization;
-using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
-using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game;
+﻿using DaggerfallConnect.Save;
 using DaggerfallWorkshop;
-using DaggerfallConnect.Save;
-
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
+using System;
+using System.Linq;
+using UnityEngine;
 
 namespace LootableSpells
 {
@@ -32,14 +31,14 @@ namespace LootableSpells
             message = 1;
         }
 
-        //Bit of a hack to use the message field to serialize the effect bundle
+        //Bit of a hack to use the message field to serialize the effect bundle ID
         public int SpellID
         {
             get { return message; }
             set
             {
                 message = value;
-                this.effectBundle = GetEffectBundleSettings(value);
+                effectBundle = GetEffectBundleSettings(value);
                 shortName = "Spellbook Page: " + effectBundle.Name;
 
                 this.value = (int)(FormulaHelper.CalculateTotalEffectCosts(
@@ -71,14 +70,14 @@ namespace LootableSpells
             if (spellData.index == -1)
             {
                 Debug.LogError("Failed to locate spell " + spellID + " in standard spells list.");
-                return GetEffectBundleSettings(0);
+                return GetEffectBundleSettings(1);
             }
 
             EffectBundleSettings bundle;
             if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
             {
                 Debug.LogError("Failed to create effect bundle for spell: " + spellData.spellName);
-                return GetEffectBundleSettings(0);
+                return GetEffectBundleSettings(1);
             }
             return bundle;
         }

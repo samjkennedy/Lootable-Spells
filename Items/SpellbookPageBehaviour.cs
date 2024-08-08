@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
-using DaggerfallConnect.Save;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LootableSpells
@@ -12,7 +12,6 @@ namespace LootableSpells
     {
         void Start()
         {
-            // Register listeners for loading game and exiting dungeons - so that state can be updated
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
         }
 
@@ -24,10 +23,7 @@ namespace LootableSpells
             {
                 if (item is SpellbookPageItem spellbookPage)
                 {
-                    //This is a little weird, maybe move the logic from the property to here?
-                    Debug.LogFormat("Restoring page with spell id {0}", spellbookPage.message);
-                    int spellID = spellbookPage.message;
-                    spellbookPage.SpellID = spellID;
+                    spellbookPage.SpellID = spellbookPage.message;
                 }
             }
         }
