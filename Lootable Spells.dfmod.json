@@ -6,9 +6,9 @@
     "ModDescription": "Spells are now Loot!",
     "GUID": "9f001df3-d531-4ea8-aa55-69aca2f22d9e",
     "Files": [
-        "Assets/Game/Mods/Lootable Spells/LootableSpellsMod.cs",
-        "Assets/Game/Mods/Lootable Spells/ItemTemplates.json",
-        "Assets/Game/Mods/Lootable Spells/modsettings.json",
-        "Assets/Game/Mods/Lootable Spells/Lootable Spells.dfmod.json"
+        "Assets/Game/Mods/Lootable-Spells/LootableSpellsMod.cs",
+        "Assets/Game/Mods/Lootable-Spells/ItemTemplates.json",
+        "Assets/Game/Mods/Lootable-Spells/modsettings.json",
+        "Assets/Game/Mods/Lootable-Spells/Lootable Spells.dfmod.json"
     ]
 }

@@ -38,7 +38,7 @@ namespace LootableSpells
             set
             {
                 message = value;
-                effectBundle = GetEffectBundleSettings(value);
+                effectBundle = LootableSpellsMod.GetEffectBundleSettings(value);
                 shortName = "Spellbook Page: " + effectBundle.Name;
 
                 this.value = (int)(FormulaHelper.CalculateTotalEffectCosts(
@@ -48,38 +48,6 @@ namespace LootableSpells
                     effectBundle.MinimumCastingCost
                 ).goldCost * valueMult);
             }
-        }
-
-        //TODO: Need to arrange spells into "tiers" so that you don't roll into a strong spell at level 1
-        //      Make it a config perhaps? Unleveled loot?
-        public static SpellbookPageItem GenerateRandomSpellbookPage(/*TODO: Tier/Quality param*/)
-        {
-            //Indexing begins at 1
-            int spellID = UnityEngine.Random.Range(1, GameManager.Instance.EntityEffectBroker.StandardSpells.Count());
-
-            SpellbookPageItem spellbookPage = new SpellbookPageItem();
-            spellbookPage.SpellID = spellID;
-
-            return spellbookPage;
-        }
-
-        private static EffectBundleSettings GetEffectBundleSettings(int spellID)
-        {
-            SpellRecord.SpellRecordData spellData;
-            GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out spellData);
-            if (spellData.index == -1)
-            {
-                Debug.LogError("Failed to locate spell " + spellID + " in standard spells list.");
-                return GetEffectBundleSettings(1);
-            }
-
-            EffectBundleSettings bundle;
-            if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle))
-            {
-                Debug.LogError("Failed to create effect bundle for spell: " + spellData.spellName);
-                return GetEffectBundleSettings(1);
-            }
-            return bundle;
         }
 
         public override bool UseItem(ItemCollection collection)

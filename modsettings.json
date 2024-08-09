@@ -35,6 +35,13 @@
                     "Description": "How often Spellbook Pages appear",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
+                },
+                {
+                    "Value": false,
+                    "Name": "UnleveledLoot",
+                    "Description": "Untie dropped spell power from player progression",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 }
             ],
             "$version": "v1"
