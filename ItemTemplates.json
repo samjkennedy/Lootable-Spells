@@ -1,7 +1,7 @@
 [
     {
         "index": 6000,
-        "name": "Spellbook Page",
+        "name": "Spell Scroll",
         "baseWeight": 0.25,
         "hitPoints": 1,
         "capacityOrTarget": 0,

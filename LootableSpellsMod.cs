@@ -31,10 +31,10 @@ namespace LootableSpells
         static Mod mod;
 
         #region Settings
-        private bool shopsHaveSpellPages;
-        private bool npcsDropSpellPages;
-        private bool dungeonsHaveSpellPages;
-        private float spellPageFrequency;
+        private bool shopsHaveSpellScrolls;
+        private bool npcsDropSpellScrolls;
+        private bool dungeonsHaveSpellScrolls;
+        private float spellScrollFrequency;
         private bool unleveledLoot;
         #endregion
 
@@ -74,10 +74,10 @@ namespace LootableSpells
 
             ModSettings settings = mod.GetSettings();
             //TODO: struct?
-            shopsHaveSpellPages = settings.GetValue<bool>("Availability", "Shops");
-            dungeonsHaveSpellPages = settings.GetValue<bool>("Availability", "DungeonLoot");
-            npcsDropSpellPages = settings.GetValue<bool>("Availability", "NPCLoot");
-            spellPageFrequency = settings.GetValue<float>("Availability", "FrequencyMultiplier");
+            shopsHaveSpellScrolls = settings.GetValue<bool>("Availability", "Shops");
+            dungeonsHaveSpellScrolls = settings.GetValue<bool>("Availability", "DungeonLoot");
+            npcsDropSpellScrolls = settings.GetValue<bool>("Availability", "NPCLoot");
+            spellScrollFrequency = settings.GetValue<float>("Availability", "FrequencyMultiplier");
 
             unleveledLoot = settings.GetValue<bool>("Availability", "UnleveledLoot");
 
@@ -90,18 +90,18 @@ namespace LootableSpells
 
             //Order matters here
             SaveLoadManager.OnLoad += RefreshSpellList_OnLoad;
-            SaveLoadManager.OnLoad += RestorePageState_OnLoad;
+            SaveLoadManager.OnLoad += RestoreScrollState_OnLoad;
 
             RegisterNewItems();
 
-            if (shopsHaveSpellPages)
-                PlayerActivate.OnLootSpawned += AddSpellPages_OnLootSpawned;
+            if (shopsHaveSpellScrolls)
+                PlayerActivate.OnLootSpawned += AddSpellScrolls_OnLootSpawned;
 
-            if (dungeonsHaveSpellPages)
-                LootTables.OnLootSpawned += AddSpellPages_OnDungeonLootSpawned;
+            if (dungeonsHaveSpellScrolls)
+                LootTables.OnLootSpawned += AddSpellScrolls_OnDungeonLootSpawned;
 
-            if (npcsDropSpellPages)
-                EnemyDeath.OnEnemyDeath += AddSpellPages_OnEnemyDeath;
+            if (npcsDropSpellScrolls)
+                EnemyDeath.OnEnemyDeath += AddSpellScrolls_OnEnemyDeath;
 
             Debug.Log("Finished mod init: Lootable Spells");
             mod.IsReady = true;
@@ -129,14 +129,14 @@ namespace LootableSpells
             }
         }
 
-        private void RestorePageState_OnLoad(SaveData_v1 saveData)
+        private void RestoreScrollState_OnLoad(SaveData_v1 saveData)
         {
-            List<DaggerfallUnityItem> spellPages = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MagicItems, SpellbookPageItem.templateIndex);
-            foreach (DaggerfallUnityItem item in spellPages)
+            List<DaggerfallUnityItem> spellScrolls = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MagicItems, SpellScrollItem.templateIndex);
+            foreach (DaggerfallUnityItem item in spellScrolls)
             {
-                if (item is SpellbookPageItem spellbookPage)
+                if (item is SpellScrollItem spellScroll)
                 {
-                    spellbookPage.SpellID = spellbookPage.message;
+                    spellScroll.SpellID = spellScroll.message;
                 }
             }
         }
@@ -147,14 +147,14 @@ namespace LootableSpells
         {
             StartGameBehaviour startGameBehaviour = GameManager.Instance.StartGameBehaviour;
 
-            DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellbookPageItem.templateIndex, ItemGroups.MiscItems, typeof(SpellbookPageItem));
+            DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellScrollItem.templateIndex, ItemGroups.MiscItems, typeof(SpellScrollItem));
 
             Debug.Log("Lootable Spells: Registered Custom Items");
         }
         #endregion
 
         #region New Behaviour
-        public void AddSpellPages_OnLootSpawned(object sender, ContainerLootSpawnedEventArgs e)
+        public void AddSpellScrolls_OnLootSpawned(object sender, ContainerLootSpawnedEventArgs e)
         {
             DaggerfallInterior interior = GameManager.Instance.PlayerEnterExit.Interior;
             if (interior == null || e.ContainerType != LootContainerTypes.ShopShelves)
@@ -164,26 +164,26 @@ namespace LootableSpells
             WeaponMaterialTypes materialType = FormulaHelper.RandomMaterial(playerEntity.Level);
             int spellQuality = WeaponQualityToSpellQuality(materialType);
 
-            int spellbookPageChance = 0;
-            int maxPagesPerShelf = 0;
+            int spellScrollChance = 0;
+            int maxScrollsPerShelf = 0;
             switch (interior.BuildingData.BuildingType)
             {
                 case DFLocation.BuildingTypes.Bookseller:
-                    spellbookPageChance = 10;
-                    maxPagesPerShelf = 2;
+                    spellScrollChance = 10;
+                    maxScrollsPerShelf = 2;
                     break;
 
                 case DFLocation.BuildingTypes.GeneralStore:
-                    spellbookPageChance = 8;
-                    maxPagesPerShelf = 1;
+                    spellScrollChance = 8;
+                    maxScrollsPerShelf = 1;
                     //General stores have lower quality spells
                     if (D100.Roll(50) && spellQuality > 0)
                         spellQuality = Mathf.Clamp(spellQuality - 1, QUALITY_LOWEST, QUALITY_HIGHEST);
                     break;
 
                 case DFLocation.BuildingTypes.PawnShop:
-                    spellbookPageChance = 4;
-                    maxPagesPerShelf = 1;
+                    spellScrollChance = 4;
+                    maxScrollsPerShelf = 1;
                     //Pawn shops have a chance for better quality spells
                     if (D100.Roll(50))
                         spellQuality = Mathf.Clamp(spellQuality + 1, QUALITY_LOWEST, QUALITY_HIGHEST);
@@ -194,23 +194,23 @@ namespace LootableSpells
                     return;
             }
 
-            if (D100.Roll((int)(spellbookPageChance * spellPageFrequency)))
+            if (D100.Roll((int)(spellScrollChance * spellScrollFrequency)))
             {
-                int numSpellPages = UnityEngine.Random.Range(1, maxPagesPerShelf);
+                int numSpellScrolls = UnityEngine.Random.Range(1, maxScrollsPerShelf);
 
-                for (int i = 0; i < numSpellPages; i++)
+                for (int i = 0; i < numSpellScrolls; i++)
                 {
-                    SpellbookPageItem spellPage = GenerateRandomSpellbookPage(spellQuality);
-                    if (spellPage == null)
+                    SpellScrollItem spellScroll = GenerateRandomSpellScroll(spellQuality);
+                    if (spellScroll == null)
                         continue;
 
-                    spellPage.value *= 2;
-                    e.Loot.AddItem(spellPage);
+                    spellScroll.value *= 2;
+                    e.Loot.AddItem(spellScroll);
                 }
             }
         }
 
-        public void AddSpellPages_OnEnemyDeath(object sender, EventArgs e)
+        public void AddSpellScrolls_OnEnemyDeath(object sender, EventArgs e)
         {
             EnemyDeath enemyDeath = sender as EnemyDeath;
             if (enemyDeath == null)
@@ -224,25 +224,25 @@ namespace LootableSpells
             if (enemyEntity == null)
                 return;
 
-            int spellbookPageChance = 0;
+            int spellScrollChance = 0;
             int enemyID = enemyEntity.MobileEnemy.ID;
             switch (enemyID)
             {
                 case (int)MobileTypes.Mage:
-                    spellbookPageChance = 15;
+                    spellScrollChance = 15;
                     break;
 
                 case (int)MobileTypes.Sorcerer:
-                    spellbookPageChance = 10;
+                    spellScrollChance = 10;
                     break;
 
                 case (int)MobileTypes.Healer:
-                    spellbookPageChance = 10; //TODO: try to spawn only restoration spells somehow
+                    spellScrollChance = 10; //TODO: try to spawn only restoration spells somehow
                     break;
 
                 case (int)MobileTypes.Spellsword:
                 case (int)MobileTypes.Battlemage:
-                    spellbookPageChance = 5;
+                    spellScrollChance = 5;
                     break;
 
                 default:
@@ -253,55 +253,55 @@ namespace LootableSpells
             WeaponMaterialTypes materialType = FormulaHelper.RandomMaterial(playerEntity.Level);
             int spellQuality = WeaponQualityToSpellQuality(materialType);
 
-            if (D100.Roll((int)(spellbookPageChance * spellPageFrequency)))
+            if (D100.Roll((int)(spellScrollChance * spellScrollFrequency)))
             {
-                SpellbookPageItem spellPage = GenerateRandomSpellbookPage(spellQuality);
-                if (spellPage == null)
+                SpellScrollItem spellScroll = GenerateRandomSpellScroll(spellQuality);
+                if (spellScroll == null)
                     return;
 
-                entityBehaviour.CorpseLootContainer.Items.AddItem(spellPage);
+                entityBehaviour.CorpseLootContainer.Items.AddItem(spellScroll);
             }
         }
 
-        public void AddSpellPages_OnDungeonLootSpawned(object sender, TabledLootSpawnedEventArgs lootArgs)
+        public void AddSpellScrolls_OnDungeonLootSpawned(object sender, TabledLootSpawnedEventArgs lootArgs)
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
 
-            int maxSpellPages = 0;
+            int maxSpellScrolls = 0;
 
             //TODO: Perhaps hard code certain spells in certain dungeons - vampires will have sleep and paralysis, orc shamans invisibility
             switch (lootArgs.LocationIndex)
             {
                 case (int)DFRegion.DungeonTypes.OrcStronghold:
-                    if (D100.Roll((int)(5 * spellPageFrequency)))
-                        maxSpellPages = 1;
+                    if (D100.Roll((int)(5 * spellScrollFrequency)))
+                        maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.HumanStronghold:
-                    if (D100.Roll((int)(5 * spellPageFrequency)))
-                        maxSpellPages = 1;
+                    if (D100.Roll((int)(5 * spellScrollFrequency)))
+                        maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.DesecratedTemple:
-                    if (D100.Roll((int)(15 * spellPageFrequency)))
-                        maxSpellPages = 1;
+                    if (D100.Roll((int)(15 * spellScrollFrequency)))
+                        maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.Coven:
-                    //Do witches even use spellbooks?
-                    if (D100.Roll((int)(25 * spellPageFrequency)))
-                        maxSpellPages = 2;
+                    //Do witches even use spells?
+                    if (D100.Roll((int)(25 * spellScrollFrequency)))
+                        maxSpellScrolls = 2;
                     break;
 
                 case (int)DFRegion.DungeonTypes.VampireHaunt:
-                    if (D100.Roll((int)(20 * spellPageFrequency)))
-                        maxSpellPages = 1;
+                    if (D100.Roll((int)(20 * spellScrollFrequency)))
+                        maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.Laboratory:
-                    if (D100.Roll((int)(35 * spellPageFrequency)))
-                        maxSpellPages = 2;
+                    if (D100.Roll((int)(35 * spellScrollFrequency)))
+                        maxSpellScrolls = 2;
                     break;
 
                 default:
@@ -311,20 +311,20 @@ namespace LootableSpells
             WeaponMaterialTypes materialType = FormulaHelper.RandomMaterial(playerEntity.Level);
             int spellQuality = WeaponQualityToSpellQuality(materialType);
 
-            int numSpellPages = UnityEngine.Random.Range(0, maxSpellPages);
-            for (int i = 0; i < numSpellPages; i++)
+            int numSpellScrolls = UnityEngine.Random.Range(0, maxSpellScrolls);
+            for (int i = 0; i < numSpellScrolls; i++)
             {
-                SpellbookPageItem spellPage = GenerateRandomSpellbookPage(spellQuality);
-                if (spellPage == null)
+                SpellScrollItem spellScroll = GenerateRandomSpellScroll(spellQuality);
+                if (spellScroll == null)
                     continue;
 
-                lootArgs.Items.AddItem(spellPage);
+                lootArgs.Items.AddItem(spellScroll);
             }
         }
         #endregion
 
-        #region Generating Spell Pages
-        private SpellbookPageItem GenerateRandomSpellbookPage(int quality)
+        #region Generating Spell Scrolls
+        private SpellScrollItem GenerateRandomSpellScroll(int quality)
         {
             if (quality == QUALITY_UNLEVELED)
                 quality = UnityEngine.Random.Range(QUALITY_LOWEST, QUALITY_HIGHEST);
@@ -332,10 +332,10 @@ namespace LootableSpells
             List<int> spellIndices = spellIndicesByQuality[quality];
             int spellIndex = spellIndices[UnityEngine.Random.Range(0, spellIndices.Count - 1)];
 
-            SpellbookPageItem spellbookPage = new SpellbookPageItem();
-            spellbookPage.SpellID = spellIndex;
+            SpellScrollItem spellScroll = new SpellScrollItem();
+            spellScroll.SpellID = spellIndex;
 
-            return spellbookPage;
+            return spellScroll;
         }
 
         private static int GetGoldCost(SpellRecord.SpellRecordData spell)
@@ -406,7 +406,5 @@ namespace LootableSpells
         }
 
         #endregion
-
     }
-
 }

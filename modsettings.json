@@ -3,27 +3,27 @@
     "Sections": [
         {
             "Name": "Availability",
-            "Description": "Availability of Spellbook Pages",
+            "Description": "Availability of Spell Scrolls",
             "IsAdvanced": false,
             "Keys": [
                 {
                     "Value": true,
                     "Name": "Shops",
-                    "Description": "Shops sell Spellbook Pages",
+                    "Description": "Shops sell Spell Scrolls",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
                 {
                     "Value": true,
                     "Name": "DungeonLoot",
-                    "Description": "Loot piles contain Spellbook Pages",
+                    "Description": "Loot piles contain Spell Scrolls",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
                 {
                     "Value": true,
                     "Name": "NPCLoot",
-                    "Description": "NPC loot piles contain Spellbook Pages",
+                    "Description": "NPC loot piles contain Spell Scrolls",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
@@ -32,14 +32,14 @@
                     "Max": 2.0,
                     "Value": 1.0,
                     "Name": "FrequencyMultiplier",
-                    "Description": "How often Spellbook Pages appear",
+                    "Description": "How often Spell Scrolls appear",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderFloatKey"
                 },
                 {
                     "Value": false,
                     "Name": "UnleveledLoot",
-                    "Description": "Untie dropped spell power from player progression",
+                    "Description": "Unties dropped spell power from player progression",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 }
