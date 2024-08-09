@@ -76,7 +76,7 @@ namespace LootableSpells
             //TODO: struct?
             shopsHaveSpellScrolls = settings.GetValue<bool>("Availability", "Shops");
             dungeonsHaveSpellScrolls = settings.GetValue<bool>("Availability", "DungeonLoot");
-            npcsDropSpellScrolls = settings.GetValue<bool>("Availability", "NPCLoot");
+            npcsDropSpellScrolls = settings.GetValue<bool>("Availability", "FoeLoot");
             spellScrollFrequency = settings.GetValue<float>("Availability", "FrequencyMultiplier");
 
             unleveledLoot = settings.GetValue<bool>("Availability", "UnleveledLoot");
@@ -110,10 +110,16 @@ namespace LootableSpells
         #region Event listeners
         private void RefreshSpellList_OnLoad(SaveData_v1 saveData)
         {
-            //TODO: This should definitely be optimised
             spellIndicesByQuality = new Dictionary<int, List<int>>();
+
+            Debug.LogFormat("There are {0} standard spells", GameManager.Instance.EntityEffectBroker.StandardSpells.Count());
+
+            //TODO: This should definitely be optimised
             foreach (SpellRecord.SpellRecordData spell in GameManager.Instance.EntityEffectBroker.StandardSpells)
             {
+                if (spell.spellName == "Lycanthropy")
+                    continue;
+
                 int goldCost = GetGoldCost(spell);
                 for (int i = 1; i < QUALITY_GOLD_THRESHOLDS.Length; i++)
                 {
@@ -176,8 +182,8 @@ namespace LootableSpells
                 case DFLocation.BuildingTypes.GeneralStore:
                     spellScrollChance = 8;
                     maxScrollsPerShelf = 1;
-                    //General stores have lower quality spells
-                    if (D100.Roll(50) && spellQuality > 0)
+                    //General stores have a chance for lower quality spells
+                    if (D100.Roll(50))
                         spellQuality = Mathf.Clamp(spellQuality - 1, QUALITY_LOWEST, QUALITY_HIGHEST);
                     break;
 

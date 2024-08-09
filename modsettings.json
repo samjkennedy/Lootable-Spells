@@ -16,14 +16,14 @@
                 {
                     "Value": true,
                     "Name": "DungeonLoot",
-                    "Description": "Loot piles contain Spell Scrolls",
+                    "Description": "Dungeon loot piles contain Spell Scrolls",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },
                 {
                     "Value": true,
-                    "Name": "NPCLoot",
-                    "Description": "NPC loot piles contain Spell Scrolls",
+                    "Name": "FoeLoot",
+                    "Description": "Foe loot piles contain Spell Scrolls",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 },

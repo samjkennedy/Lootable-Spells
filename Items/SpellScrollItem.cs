@@ -24,7 +24,7 @@ namespace LootableSpells
         private EffectBundleSettings effectBundle;
         public EffectBundleSettings EffectBundle { get { return effectBundle; } }
 
-        private const float valueMult = 1.5f; //TODO: Config
+        private const float valueMult = 1.5f; //TODO: Config?
 
         public SpellScrollItem() : base(ItemGroups.MagicItems, templateIndex)
         {
@@ -69,9 +69,9 @@ namespace LootableSpells
                 return true;
             }
 
-            if (Array.IndexOf(playerEntity.GetSpells(), effectBundle) != -1)
+            if (playerEntity.GetSpells().Any(spell => spell.Name == EffectBundle.Name))
             {
-                DaggerfallUI.MessageBox("Your spellbook already contains the spell '" + effectBundle.Name + "'.");
+                DaggerfallUI.MessageBox("Your spellbook already contains the spell '" + EffectBundle.Name + "'.");
                 return true;
             }
 
