@@ -1,17 +1,17 @@
 {
     "ModTitle": "Spell Scrolls",
-    "ModVersion": "1.0",
+    "ModVersion": "1.0.1",
     "ModAuthor": "Samwise",
     "DFUnity_Version": "1.1.1",
     "ModDescription": "Adds spell scrolls",
     "GUID": "0a93142b-f835-45b8-8e2a-46fca44c2494",
     "Files": [
-        "Assets/Game/Mods/Lootable-Spells/modsettings.json",
-        "Assets/Game/Mods/Lootable-Spells/ItemTemplates.json",
         "Assets/Game/Mods/Lootable-Spells/Scripts/LootableSpellsMod.cs",
         "Assets/Game/Mods/Lootable-Spells/Scripts/D100.cs",
+        "Assets/Game/Mods/Lootable-Spells/Scripts/ScrollEffect.cs",
         "Assets/Game/Mods/Lootable-Spells/Scripts/Items/SpellScrollItem.cs",
+        "Assets/Game/Mods/Lootable-Spells/modsettings.json",
+        "Assets/Game/Mods/Lootable-Spells/ItemTemplates.json"
         "Assets/Game/Mods/Lootable-Spells/Lootable Spells.dfmod.json",
-        "Assets/Game/Mods/Lootable-Spells/Scripts/ScrollEffect.cs"
     ]
 }
