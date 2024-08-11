@@ -1,4 +1,5 @@
 ﻿using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
@@ -47,6 +48,19 @@ namespace LootableSpells
                     null, //Player caster
                     effectBundle.MinimumCastingCost
                 ).goldCost * valueMult);
+
+                this.customMagic = new CustomEnchantment[] {
+                    new CustomEnchantment() {
+                        EffectKey = LootableSpellsMod.SCROLL_EFFECT_KEY,
+                        CustomParam = value.ToString(),
+                    }
+                };
+                this.legacyMagic = new DaggerfallEnchantment[] {
+                    new DaggerfallEnchantment() {
+                        type = EnchantmentTypes.CastWhenUsed,
+                        param = (short) value
+                    }
+                };
             }
         }
 
@@ -77,14 +91,7 @@ namespace LootableSpells
 
             //Must play sound before the message box opens for some reason
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
-            {
-                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
-                (
-                    SoundClips.ParchmentScratching,
-                    GameManager.Instance.PlayerObject.transform.position,
-                    1f
-                );
-            };
+                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint(SoundClips.ParchmentScratching, GameManager.Instance.PlayerObject.transform.position, 1f);
 
             //I'd rather prompt the player if they wish to copy the spell into their spellbook, 
             //  but removing the page inside the lambda wasn't working right
@@ -101,11 +108,6 @@ namespace LootableSpells
             collection.RemoveOne(this);
             playerEntity.AddSpell(EffectBundle);
             return true;
-        }
-
-        public override bool IsEnchanted
-        {
-            get { return true; }
         }
 
         public override ItemData_v1 GetSaveData()
