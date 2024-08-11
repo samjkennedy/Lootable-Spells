@@ -32,12 +32,15 @@ namespace LootableSpells
 
         public static string SCROLL_EFFECT_KEY = "LootableSpells_ScrollEffect";
 
+        const ushort identifiedMask = 0x20;
+
         #region Settings
         private bool shopsHaveSpellScrolls;
         private bool npcsDropSpellScrolls;
         private bool dungeonsHaveSpellScrolls;
         private float spellScrollFrequency;
         private bool unleveledLoot;
+        private bool autoidentify;
         #endregion
 
         #region Spell Quality
@@ -81,8 +84,9 @@ namespace LootableSpells
             dungeonsHaveSpellScrolls = settings.GetValue<bool>("Availability", "DungeonLoot");
             npcsDropSpellScrolls = settings.GetValue<bool>("Availability", "FoeLoot");
             spellScrollFrequency = settings.GetValue<float>("Availability", "FrequencyMultiplier");
-
             unleveledLoot = settings.GetValue<bool>("Availability", "UnleveledLoot");
+
+            autoidentify = settings.GetValue<bool>("Gameplay", "AutoIdentifyScrolls");
 
             InitMod();
         }
@@ -127,7 +131,6 @@ namespace LootableSpells
             spellIndicesByQuality.Clear();
 
             //TODO: This should definitely be optimised
-            int totalSpells = 0;
             foreach (SpellRecord.SpellRecordData spell in GameManager.Instance.EntityEffectBroker.StandardSpells)
             {
                 if (spell.spellName.StartsWith("!"))
@@ -142,12 +145,10 @@ namespace LootableSpells
                             spellIndicesByQuality.Add(i, new List<int>());
 
                         spellIndicesByQuality[i].Add(spell.index);
-                        totalSpells++;
                         break;
                     }
                 }
             }
-            Debug.LogFormat("Refreshed {0} spells", totalSpells);
         }
 
         private void RestoreScrollState_OnLoad(SaveData_v1 saveData)
@@ -353,6 +354,11 @@ namespace LootableSpells
 
             SpellScrollItem spellScroll = new SpellScrollItem();
             spellScroll.SpellID = spellIndex;
+
+            if (autoidentify)
+            {
+                spellScroll.flags |= identifiedMask;
+            }
 
             return spellScroll;
         }
