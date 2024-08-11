@@ -16,7 +16,6 @@ namespace LootableSpells
         public override void SetProperties()
         {
             properties.Key = LootableSpellsMod.SCROLL_EFFECT_KEY;
-            properties.ShowSpellIcon = false;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Used;
         }
 
@@ -36,24 +35,27 @@ namespace LootableSpells
             if (context != EnchantmentPayloadFlags.Used || sourceEntity == null || param == null)
                 return null;
 
-            if (DaggerfallUI.Instance.DaggerfallAudioSource)
-                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
-                (
-                    SoundClips.PageTurn,
-                    GameManager.Instance.PlayerObject.transform.position,
-                    1f
-                );
+            DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
+            (
+                SoundClips.PageTurn,
+                GameManager.Instance.PlayerObject.transform.position,
+                1f
+            );
 
-
-            //Annoyingly CastWhenUsed doesn't play a CastSpell sound if the effect is a Self effect... so let's do that for it
+            EntityEffectBroker entityEffectBroker = GameManager.Instance.EntityEffectBroker;
             if (int.TryParse(param.Value.CustomParam, out int spellID)
-                && GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out SpellRecord.SpellRecordData spell)
-                && GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out EffectBundleSettings bundleSettings))
+                && entityEffectBroker.GetClassicSpellRecord(spellID, out SpellRecord.SpellRecordData spell)
+                && entityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, BundleTypes.Spell, out EffectBundleSettings bundleSettings))
             {
+                //Annoyingly CastWhenUsed doesn't play a CastSpell sound if the effect is a Self effect... so let's do that for it
                 if (bundleSettings.TargetType == TargetTypes.CasterOnly)
                 {
-                    if (DaggerfallUI.Instance.DaggerfallAudioSource)
-                        DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint(SoundClips.CastSpell1, GameManager.Instance.PlayerObject.transform.position, 1f);
+                    DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
+                    (
+                        SoundClips.CastSpell1,
+                        GameManager.Instance.PlayerObject.transform.position,
+                        1f
+                    );
                 }
             }
 
