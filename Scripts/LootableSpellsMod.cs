@@ -225,6 +225,7 @@ namespace LootableSpells
                         continue;
 
                     spellScroll.value *= 2;
+                    spellScroll.flags |= identifiedMask;
                     e.Loot.AddItem(spellScroll);
                 }
             }

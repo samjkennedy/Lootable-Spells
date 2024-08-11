@@ -1,16 +1,16 @@
 {
-    "ModTitle": "Lootable Spells",
-    "ModVersion": "0.9",
+    "ModTitle": "Spell Scrolls",
+    "ModVersion": "1.0.1",
     "ModAuthor": "Samwise",
     "DFUnity_Version": "1.1.1",
     "ModDescription": "Spells are now Loot!",
     "GUID": "cfe4e623-3b0a-448f-a45a-853498554be4",
     "Files": [
-        "Assets/Game/Mods/Lootable-Spells/modsettings.json",
-        "Assets/Game/Mods/Lootable-Spells/ItemTemplates.json",
         "Assets/Game/Mods/Lootable-Spells/Scripts/LootableSpellsMod.cs",
         "Assets/Game/Mods/Lootable-Spells/Scripts/D100.cs",
         "Assets/Game/Mods/Lootable-Spells/Scripts/ScrollEffect.cs",
-        "Assets/Game/Mods/Lootable-Spells/Scripts/Items/SpellScrollItem.cs"
+        "Assets/Game/Mods/Lootable-Spells/Scripts/Items/SpellScrollItem.cs",
+        "Assets/Game/Mods/Lootable-Spells/modsettings.json",
+        "Assets/Game/Mods/Lootable-Spells/ItemTemplates.json"
     ]
 }
