@@ -25,11 +25,10 @@ namespace LootableSpells
         private EffectBundleSettings effectBundle;
         public EffectBundleSettings EffectBundle { get { return effectBundle; } }
 
-        private const float valueMult = 1.5f; //TODO: Config?
+        private const float valueMult = 1.5f;
 
         public SpellScrollItem() : base(ItemGroups.MagicItems, templateIndex)
         {
-            message = 1;
         }
 
         //Bit of a hack to use the message field to serialize the effect bundle ID
@@ -49,12 +48,14 @@ namespace LootableSpells
                     effectBundle.MinimumCastingCost
                 ).goldCost * valueMult);
 
+                //Custom enchantment allows it to call ScrollEffect.cs when used
                 this.customMagic = new CustomEnchantment[] {
                     new CustomEnchantment() {
                         EffectKey = LootableSpellsMod.SCROLL_EFFECT_KEY,
-                        CustomParam = value.ToString(),
+                        CustomParam = value.ToString(), //Send ScrollEffect.cs the spell ID as a custom param
                     }
                 };
+                //Daggerfall enchantment performs the spell effect
                 this.legacyMagic = new DaggerfallEnchantment[] {
                     new DaggerfallEnchantment() {
                         type = EnchantmentTypes.CastWhenUsed,
@@ -75,14 +76,13 @@ namespace LootableSpells
                 return true;
             }
 
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-
             if (collection.GetItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook) == null)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noSpellbook"));
                 return true;
             }
 
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             if (playerEntity.GetSpells().Any(spell => spell.Name == EffectBundle.Name))
             {
                 DaggerfallUI.MessageBox("Your spellbook already contains the spell '" + EffectBundle.Name + "'.");
@@ -91,7 +91,12 @@ namespace LootableSpells
 
             //Must play sound before the message box opens for some reason
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
-                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint(SoundClips.ParchmentScratching, GameManager.Instance.PlayerObject.transform.position, 1f);
+                DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
+                (
+                    SoundClips.ParchmentScratching,
+                    GameManager.Instance.PlayerObject.transform.position,
+                    1f
+                );
 
             //I'd rather prompt the player if they wish to copy the spell into their spellbook, 
             //  but removing the page inside the lambda wasn't working right
@@ -107,6 +112,7 @@ namespace LootableSpells
 
             collection.RemoveOne(this);
             playerEntity.AddSpell(EffectBundle);
+
             return true;
         }
 
