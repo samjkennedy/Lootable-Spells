@@ -30,7 +30,7 @@ namespace LootableSpells
 
         static Mod mod;
 
-        public static string SCROLL_EFFECT_KEY = "LootableSpells_ScrollEffect";
+        public static string SCROLL_EFFECT_KEY = "!LootableSpells_ScrollEffect";
 
         const ushort identifiedMask = 0x20;
 
@@ -79,7 +79,7 @@ namespace LootableSpells
             Instance = this;
 
             ModSettings settings = mod.GetSettings();
-            //TODO: struct?
+
             shopsHaveSpellScrolls = settings.GetValue<bool>("Availability", "Shops");
             dungeonsHaveSpellScrolls = settings.GetValue<bool>("Availability", "DungeonLoot");
             npcsDropSpellScrolls = settings.GetValue<bool>("Availability", "FoeLoot");
@@ -101,6 +101,7 @@ namespace LootableSpells
             SaveLoadManager.OnLoad += RestoreScrollState_OnLoad;
 
             RegisterNewItems();
+            RegisterNewEffects();
 
             if (shopsHaveSpellScrolls)
                 PlayerActivate.OnLootSpawned += AddSpellScrolls_OnLootSpawned;
@@ -170,6 +171,12 @@ namespace LootableSpells
             DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellScrollItem.templateIndex, ItemGroups.MiscItems, typeof(SpellScrollItem));
 
             Debug.Log("Lootable Spells: Registered Custom Items");
+        }
+        private void RegisterNewEffects()
+        {
+            GameManager.Instance.EntityEffectBroker.RegisterEffectTemplate(new ScrollEffect(), true);
+
+            Debug.Log("Lootable Spells: Registered Custom Effects");
         }
         #endregion
 
@@ -246,8 +253,7 @@ namespace LootableSpells
                 return;
 
             int spellScrollChance = 0;
-            int enemyID = enemyEntity.MobileEnemy.ID;
-            switch (enemyID)
+            switch (enemyEntity.MobileEnemy.ID)
             {
                 case (int)MobileTypes.Mage:
                     spellScrollChance = 15;
@@ -258,7 +264,8 @@ namespace LootableSpells
                     break;
 
                 case (int)MobileTypes.Healer:
-                    spellScrollChance = 10; //TODO: try to spawn only restoration spells somehow
+                    //TODO: try to spawn only restoration spells somehow
+                    spellScrollChance = 10;
                     break;
 
                 case (int)MobileTypes.Spellsword:
@@ -310,7 +317,7 @@ namespace LootableSpells
                     break;
 
                 case (int)DFRegion.DungeonTypes.Coven:
-                    //Do witches even use spells?
+                    //Do witches even use scrolls?
                     if (D100.Roll((int)(25 * spellScrollFrequency)))
                         maxSpellScrolls = 2;
                     break;
@@ -357,9 +364,7 @@ namespace LootableSpells
             spellScroll.SpellID = spellIndex;
 
             if (autoidentify)
-            {
                 spellScroll.flags |= identifiedMask;
-            }
 
             return spellScroll;
         }
@@ -397,7 +402,7 @@ namespace LootableSpells
 
         private int WeaponQualityToSpellQuality(WeaponMaterialTypes materialType)
         {
-            //Tie spell progression to the material type melee characters would be finding
+            //Ties spell progression to the material type melee characters would be finding
             //That way if another mod edits the progression curve for materials, the spell progression
             //curve is edited to match also
 
@@ -430,7 +435,6 @@ namespace LootableSpells
                     return QUALITY_UNLEVELED;
             }
         }
-
         #endregion
     }
 }
