@@ -2,6 +2,21 @@
     "Version": "0.9",
     "Sections": [
         {
+            "Name": "Gameplay",
+            "Description": "Gameplay Options",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Value": false,
+                    "Name": "AutoIdentifyScrolls",
+                    "Description": "No need to identify scrolls to know what spell they contain",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                }
+            ],
+            "$version": "v1"
+        },
+        {
             "Name": "Availability",
             "Description": "Availability of Spell Scrolls",
             "IsAdvanced": false,
@@ -29,7 +44,7 @@
                 },
                 {
                     "Min": 0.0,
-                    "Max": 2.0,
+                    "Max": 5.0,
                     "Value": 1.0,
                     "Name": "FrequencyMultiplier",
                     "Description": "How often Spell Scrolls appear",

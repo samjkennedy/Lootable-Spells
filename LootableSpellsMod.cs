@@ -30,6 +30,8 @@ namespace LootableSpells
 
         static Mod mod;
 
+        public static string SCROLL_EFFECT_KEY = "LootableSpells_ScrollEffect";
+
         #region Settings
         private bool shopsHaveSpellScrolls;
         private bool npcsDropSpellScrolls;
@@ -39,7 +41,7 @@ namespace LootableSpells
         #endregion
 
         #region Spell Quality
-        private Dictionary<int, List<int>> spellIndicesByQuality;
+        private Dictionary<int, List<int>> spellIndicesByQuality = new Dictionary<int, List<int>>();
 
         //in lieu of a proper enum
         private const int QUALITY_UNLEVELED = 0;
@@ -49,6 +51,7 @@ namespace LootableSpells
         private const int QUALITY_HIGH = 4;
         private const int QUALITY_HIGHEST = 5;
 
+        //TODO: These should be dynamically calculated in case a mod updates the spell costs (Kab's unleveled spells)
         private int[] QUALITY_GOLD_THRESHOLDS = {
             -1,
             200,
@@ -88,8 +91,9 @@ namespace LootableSpells
         {
             Debug.Log("Begin mod init: Lootable Spells");
 
-            //Order matters here
             SaveLoadManager.OnLoad += RefreshSpellList_OnLoad;
+            StartGameBehaviour.OnStartGame += RefreshSpellList_OnNewGame;
+
             SaveLoadManager.OnLoad += RestoreScrollState_OnLoad;
 
             RegisterNewItems();
@@ -110,14 +114,23 @@ namespace LootableSpells
         #region Event listeners
         private void RefreshSpellList_OnLoad(SaveData_v1 saveData)
         {
-            spellIndicesByQuality = new Dictionary<int, List<int>>();
+            RefreshSpellList();
+        }
 
-            Debug.LogFormat("There are {0} standard spells", GameManager.Instance.EntityEffectBroker.StandardSpells.Count());
+        private void RefreshSpellList_OnNewGame(object sender, EventArgs e)
+        {
+            RefreshSpellList();
+        }
+
+        private void RefreshSpellList()
+        {
+            spellIndicesByQuality.Clear();
 
             //TODO: This should definitely be optimised
+            int totalSpells = 0;
             foreach (SpellRecord.SpellRecordData spell in GameManager.Instance.EntityEffectBroker.StandardSpells)
             {
-                if (spell.spellName == "Lycanthropy")
+                if (spell.spellName.StartsWith("!"))
                     continue;
 
                 int goldCost = GetGoldCost(spell);
@@ -129,10 +142,12 @@ namespace LootableSpells
                             spellIndicesByQuality.Add(i, new List<int>());
 
                         spellIndicesByQuality[i].Add(spell.index);
+                        totalSpells++;
                         break;
                     }
                 }
             }
+            Debug.LogFormat("Refreshed {0} spells", totalSpells);
         }
 
         private void RestoreScrollState_OnLoad(SaveData_v1 saveData)
@@ -151,8 +166,6 @@ namespace LootableSpells
         #region Registering
         private void RegisterNewItems()
         {
-            StartGameBehaviour startGameBehaviour = GameManager.Instance.StartGameBehaviour;
-
             DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellScrollItem.templateIndex, ItemGroups.MiscItems, typeof(SpellScrollItem));
 
             Debug.Log("Lootable Spells: Registered Custom Items");
