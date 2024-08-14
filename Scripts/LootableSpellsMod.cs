@@ -356,6 +356,9 @@ namespace LootableSpells
             if (quality == QUALITY_UNLEVELED)
                 quality = UnityEngine.Random.Range(0, spellIndicesByQuality.Count);
 
+            if (spellIndicesByQuality.Count <= quality)
+                return null;
+
             List<int> spellIndices = spellIndicesByQuality[quality];
             int spellIndex = spellIndices[UnityEngine.Random.Range(0, spellIndices.Count)];
 
