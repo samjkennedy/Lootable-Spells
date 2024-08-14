@@ -6,7 +6,7 @@ namespace LootableSpells
     {
         public static bool Roll(int threshold)
         {
-            return UnityEngine.Random.Range(0, 99) < threshold;
+            return UnityEngine.Random.Range(0, 100) < threshold;
         }
     }
 }

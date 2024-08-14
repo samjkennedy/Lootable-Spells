@@ -47,16 +47,15 @@ namespace LootableSpells
         private Dictionary<int, List<int>> spellIndicesByQuality = new Dictionary<int, List<int>>();
 
         //in lieu of a proper enum
-        private const int QUALITY_UNLEVELED = 0;
-        private const int QUALITY_LOWEST = 1;
-        private const int QUALITY_LOW = 2;
-        private const int QUALITY_MED = 3;
-        private const int QUALITY_HIGH = 4;
-        private const int QUALITY_HIGHEST = 5;
+        private const int QUALITY_UNLEVELED = -1;
+        private const int QUALITY_LOWEST = 0;
+        private const int QUALITY_LOW = 1;
+        private const int QUALITY_MED = 2;
+        private const int QUALITY_HIGH = 3;
+        private const int QUALITY_HIGHEST = 4;
 
         //TODO: These should be dynamically calculated in case a mod updates the spell costs (Kab's unleveled spells)
         private int[] QUALITY_GOLD_THRESHOLDS = {
-            -1,
             200,
             500,
             1000,
@@ -138,7 +137,7 @@ namespace LootableSpells
                     continue;
 
                 int goldCost = GetGoldCost(spell);
-                for (int i = 1; i < QUALITY_GOLD_THRESHOLDS.Length; i++)
+                for (int i = 0; i < QUALITY_GOLD_THRESHOLDS.Length; i++)
                 {
                     if (goldCost < QUALITY_GOLD_THRESHOLDS[i])
                     {
@@ -223,7 +222,7 @@ namespace LootableSpells
 
             if (D100.Roll((int)(spellScrollChance * spellScrollFrequency)))
             {
-                int numSpellScrolls = UnityEngine.Random.Range(1, maxScrollsPerShelf);
+                int numSpellScrolls = UnityEngine.Random.Range(1, maxScrollsPerShelf + 1);
 
                 for (int i = 0; i < numSpellScrolls; i++)
                 {
@@ -339,7 +338,7 @@ namespace LootableSpells
             WeaponMaterialTypes materialType = FormulaHelper.RandomMaterial(playerEntity.Level);
             int spellQuality = WeaponQualityToSpellQuality(materialType);
 
-            int numSpellScrolls = UnityEngine.Random.Range(0, maxSpellScrolls);
+            int numSpellScrolls = UnityEngine.Random.Range(1, maxSpellScrolls + 1);
             for (int i = 0; i < numSpellScrolls; i++)
             {
                 SpellScrollItem spellScroll = GenerateRandomSpellScroll(spellQuality);
@@ -355,10 +354,10 @@ namespace LootableSpells
         private SpellScrollItem GenerateRandomSpellScroll(int quality)
         {
             if (quality == QUALITY_UNLEVELED)
-                quality = UnityEngine.Random.Range(QUALITY_LOWEST, QUALITY_HIGHEST);
+                quality = UnityEngine.Random.Range(0, spellIndicesByQuality.Count);
 
             List<int> spellIndices = spellIndicesByQuality[quality];
-            int spellIndex = spellIndices[UnityEngine.Random.Range(0, spellIndices.Count - 1)];
+            int spellIndex = spellIndices[UnityEngine.Random.Range(0, spellIndices.Count)];
 
             SpellScrollItem spellScroll = new SpellScrollItem();
             spellScroll.SpellID = spellIndex;
