@@ -27,7 +27,7 @@ namespace LootableSpells
 
         private const float valueMult = 1.5f;
 
-        public SpellScrollItem() : base(ItemGroups.MagicItems, templateIndex)
+        public SpellScrollItem() : base(ItemGroups.UselessItems2, templateIndex)
         {
         }
 

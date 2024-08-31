@@ -167,7 +167,7 @@ namespace LootableSpells
         #region Registering
         private void RegisterNewItems()
         {
-            DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellScrollItem.templateIndex, ItemGroups.MiscItems, typeof(SpellScrollItem));
+            DaggerfallUnity.Instance.ItemHelper.RegisterCustomItem(SpellScrollItem.templateIndex, ItemGroups.UselessItems2, typeof(SpellScrollItem));
 
             Debug.Log("Lootable Spells: Registered Custom Items");
         }
