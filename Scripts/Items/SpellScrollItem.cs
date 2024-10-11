@@ -67,6 +67,7 @@ namespace LootableSpells
 
         public override bool UseItem(ItemCollection collection)
         {
+            SpellID = message;
             if (collection == null)
                 return true;
 
