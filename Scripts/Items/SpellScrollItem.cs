@@ -83,35 +83,37 @@ namespace LootableSpells
             }
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (playerEntity.GetSpells().Any(spell => spell.Name == EffectBundle.Name))
+            if (playerEntity.GetSpells().Any(spell => spell.Name == effectBundle.Name))
             {
-                DaggerfallUI.MessageBox("Your spellbook already contains the spell '" + EffectBundle.Name + "'.");
+                DaggerfallUI.MessageBox("Your spellbook already contains the spell '" + effectBundle.Name + "'.");
                 return true;
             }
 
             //Must play sound before the message box opens for some reason
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
+            {
                 DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint
                 (
                     SoundClips.ParchmentScratching,
                     GameManager.Instance.PlayerObject.transform.position,
                     1f
                 );
+            }
 
             //I'd rather prompt the player if they wish to copy the spell into their spellbook, 
             //  but removing the page inside the lambda wasn't working right
-            DaggerfallMessageBox messageText = new DaggerfallMessageBox
+            DaggerfallMessageBox copyMessage = new DaggerfallMessageBox
             (
                 DaggerfallUI.UIManager,
                 DaggerfallMessageBox.CommonMessageBoxButtons.Nothing,
-                "You copy the spell '" + EffectBundle.Name + "' into your spellbook.",
+                "You copy the spell '" + effectBundle.Name + "' into your spellbook.",
                 DaggerfallUI.UIManager.TopWindow
             );
-            messageText.ClickAnywhereToClose = true;
-            messageText.Show();
+            copyMessage.ClickAnywhereToClose = true;
+            copyMessage.Show();
 
             collection.RemoveOne(this);
-            playerEntity.AddSpell(EffectBundle);
+            playerEntity.AddSpell(effectBundle);
 
             return true;
         }

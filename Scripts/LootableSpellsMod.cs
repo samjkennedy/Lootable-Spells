@@ -43,8 +43,7 @@ namespace LootableSpells
         private bool autoidentify;
         #endregion
 
-        #region Spell Quality
-        private Dictionary<int, List<int>> spellIndicesByQuality = new Dictionary<int, List<int>>();
+        #region Constants
 
         //in lieu of a proper enum
         private const int QUALITY_UNLEVELED = -1;
@@ -53,6 +52,31 @@ namespace LootableSpells
         private const int QUALITY_MED = 2;
         private const int QUALITY_HIGH = 3;
         private const int QUALITY_HIGHEST = 4;
+
+        //Dungeon loot chances
+        private const int CHANCE_ORC_STRONGHOLD = 5;
+        private const int CHANCE_HUMAN_STRONGHOLD = 5;
+        private const int CHANCE_DESECRATED_TEMPLE = 15;
+        private const int CHANCE_WITCH_COVEN = 25;
+        private const int CHANCE_VAMPIRE_HAUNT = 20;
+        private const int CHANCE_LABORATORY = 35;
+
+        //NPC drop chances
+        private const int CHANCE_MAGE = 15;
+        private const int CHANCE_SORCERER = 10;
+        private const int CHANCE_HEALER = 10;
+        private const int CHANCE_SPELLSWORD = 5;
+        private const int CHANCE_BATTLEMAGE = 5;
+
+        //Shop stock chances
+        private const int CHANCE_BOOKSELLER = 10;
+        private const int CHANCE_GENERAL_STORE = 8;
+        private const int CHANCE_PAWN_SHOP = 4;
+
+        #endregion
+
+        #region Spell Quality
+        private Dictionary<int, List<int>> spellIndicesByQuality = new Dictionary<int, List<int>>();
 
         //TODO: These should be dynamically calculated in case a mod updates the spell costs (Kab's unleveled spells)
         private int[] QUALITY_GOLD_THRESHOLDS = {
@@ -153,7 +177,7 @@ namespace LootableSpells
 
         private void RestoreScrollState_OnLoad(SaveData_v1 saveData)
         {
-            List<DaggerfallUnityItem> spellScrolls = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.MagicItems, SpellScrollItem.templateIndex);
+            List<DaggerfallUnityItem> spellScrolls = GameManager.Instance.PlayerEntity.Items.SearchItems(ItemGroups.UselessItems2, SpellScrollItem.templateIndex);
             foreach (DaggerfallUnityItem item in spellScrolls)
             {
                 if (item is SpellScrollItem spellScroll)
@@ -195,12 +219,12 @@ namespace LootableSpells
             switch (interior.BuildingData.BuildingType)
             {
                 case DFLocation.BuildingTypes.Bookseller:
-                    spellScrollChance = 10;
+                    spellScrollChance = CHANCE_BOOKSELLER;
                     maxScrollsPerShelf = 2;
                     break;
 
                 case DFLocation.BuildingTypes.GeneralStore:
-                    spellScrollChance = 8;
+                    spellScrollChance = CHANCE_GENERAL_STORE;
                     maxScrollsPerShelf = 1;
                     //General stores have a chance for lower quality spells
                     if (D100.Roll(50))
@@ -208,7 +232,7 @@ namespace LootableSpells
                     break;
 
                 case DFLocation.BuildingTypes.PawnShop:
-                    spellScrollChance = 4;
+                    spellScrollChance = CHANCE_PAWN_SHOP;
                     maxScrollsPerShelf = 1;
                     //Pawn shops have a chance for better quality spells
                     if (D100.Roll(50))
@@ -255,21 +279,24 @@ namespace LootableSpells
             switch (enemyEntity.MobileEnemy.ID)
             {
                 case (int)MobileTypes.Mage:
-                    spellScrollChance = 15;
+                    spellScrollChance = CHANCE_MAGE;
                     break;
 
                 case (int)MobileTypes.Sorcerer:
-                    spellScrollChance = 10;
+                    spellScrollChance = CHANCE_SORCERER;
                     break;
 
                 case (int)MobileTypes.Healer:
                     //TODO: try to spawn only restoration spells somehow
-                    spellScrollChance = 10;
+                    spellScrollChance = CHANCE_HEALER;
                     break;
 
                 case (int)MobileTypes.Spellsword:
+                    spellScrollChance = CHANCE_SPELLSWORD;
+                    break;
+
                 case (int)MobileTypes.Battlemage:
-                    spellScrollChance = 5;
+                    spellScrollChance = CHANCE_BATTLEMAGE;
                     break;
 
                 default:
@@ -292,48 +319,49 @@ namespace LootableSpells
 
         public void AddSpellScrolls_OnDungeonLootSpawned(object sender, TabledLootSpawnedEventArgs lootArgs)
         {
-            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
-
             int maxSpellScrolls = 0;
 
             //TODO: Perhaps hard code certain spells in certain dungeons - vampires will have sleep and paralysis, orc shamans invisibility
             switch (lootArgs.LocationIndex)
             {
                 case (int)DFRegion.DungeonTypes.OrcStronghold:
-                    if (D100.Roll((int)(5 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_ORC_STRONGHOLD * spellScrollFrequency)))
                         maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.HumanStronghold:
-                    if (D100.Roll((int)(5 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_HUMAN_STRONGHOLD * spellScrollFrequency)))
                         maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.DesecratedTemple:
-                    if (D100.Roll((int)(15 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_DESECRATED_TEMPLE * spellScrollFrequency)))
                         maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.Coven:
-                    //Do witches even use scrolls?
-                    if (D100.Roll((int)(25 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_WITCH_COVEN * spellScrollFrequency)))
                         maxSpellScrolls = 2;
                     break;
 
                 case (int)DFRegion.DungeonTypes.VampireHaunt:
-                    if (D100.Roll((int)(20 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_VAMPIRE_HAUNT * spellScrollFrequency)))
                         maxSpellScrolls = 1;
                     break;
 
                 case (int)DFRegion.DungeonTypes.Laboratory:
-                    if (D100.Roll((int)(35 * spellScrollFrequency)))
+                    if (D100.Roll((int)(CHANCE_LABORATORY * spellScrollFrequency)))
                         maxSpellScrolls = 2;
                     break;
 
                 default:
                     return;
             }
+
+            if (maxSpellScrolls == 0)
+                return;
+
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             WeaponMaterialTypes materialType = FormulaHelper.RandomMaterial(playerEntity.Level);
             int spellQuality = WeaponQualityToSpellQuality(materialType);
@@ -362,6 +390,9 @@ namespace LootableSpells
             List<int> spellIndices = spellIndicesByQuality[quality];
             int spellIndex = spellIndices[UnityEngine.Random.Range(0, spellIndices.Count)];
 
+            if (spellIndex == -1)
+                return null;
+
             SpellScrollItem spellScroll = new SpellScrollItem();
             spellScroll.SpellID = spellIndex;
 
@@ -386,8 +417,7 @@ namespace LootableSpells
         public static EffectBundleSettings GetEffectBundleSettings(int spellID)
         {
             SpellRecord.SpellRecordData spellData;
-            GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out spellData);
-            if (spellData.index == -1)
+            if (!GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellID, out spellData))
             {
                 Debug.LogError("Failed to locate spell " + spellID + " in standard spells list.");
                 return GetEffectBundleSettings(1);
